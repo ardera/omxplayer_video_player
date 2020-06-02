@@ -1,2 +1,2 @@
 # omxplayer_video_player
-A `video_player_platform_interface` implementation that uses the `omxplayer` native app and platform views to play videos.
+A package that implements [`video_player_platform_interface`](https://pub.dev/packages/video_player_platform_interface) using [`omxplayer`](https://www.raspberrypi.org/documentation/raspbian/applications/omxplayer.md) and platform views.
