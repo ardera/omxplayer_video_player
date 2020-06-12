@@ -64,17 +64,17 @@ class OmxplayerVideoPlayer extends VideoPlayerPlatform {
       _PlatformInterface.instance.getPosition(textureId);
 
   @override
+
   /// Omxplayer can only have one view, which is a difference to most other
   /// video player implementations.
   Widget buildView(int textureId) {
     return EnsureUnique(
-      strict: this._strictViewBehaviour,
-      identity: _OmxplayerKey(textureId),
-      child: OmxplayerView(
-        key: _OmxplayerKey(textureId),
-        playerId: textureId,
-      )
-    );
+        strict: this._strictViewBehaviour,
+        identity: _OmxplayerKey(textureId),
+        child: OmxplayerView(
+          key: _OmxplayerKey(textureId),
+          playerId: textureId,
+        ));
   }
 
   /// Sets up [OmxplayerViewPlayer] as the [VideoPlayerPlatform.instance],

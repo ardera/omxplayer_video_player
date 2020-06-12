@@ -4,7 +4,7 @@ class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
   UniqueRegistry._();
 
   static UniqueRegistry _instance;
-  
+
   static final _registry = <Key, List<_EnsureUniqueState>>{};
 
   final _notifier = ValueNotifier<_EnsureUniqueState>(null);
@@ -19,15 +19,15 @@ class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
 
   @override
   void addListener(listener) => _notifier.addListener(listener);
-  
+
   @override
   void removeListener(listener) => _notifier.removeListener(listener);
 
   @override
   _EnsureUniqueState get value => _notifier.value;
 
-  bool isRegistered(Key key, State state)
-    => _registry.containsKey(key) && _registry[key].contains(state);
+  bool isRegistered(Key key, State state) =>
+      _registry.containsKey(key) && _registry[key].contains(state);
 
   void register(Key key, State state) {
     _registry.putIfAbsent(key, () => <_EnsureUniqueState>[]).insert(0, state);
@@ -51,14 +51,11 @@ class _EnsureUniqueKey extends GlobalObjectKey {
 }
 
 class EnsureUnique extends StatefulWidget {
-  EnsureUnique({
-    this.strict = false,
-    @required this.identity,
-    @required this.child
-  }) :
-    assert(strict != null), 
-    assert(identity != null),
-    assert(child != null);
+  EnsureUnique(
+      {this.strict = false, @required this.identity, @required this.child})
+      : assert(strict != null),
+        assert(identity != null),
+        assert(child != null);
 
   final bool strict;
   final Key identity;
@@ -85,7 +82,7 @@ class _EnsureUniqueState extends State<EnsureUnique> {
   @override
   void didUpdateWidget(EnsureUnique oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.identity != widget.identity) {
       UniqueRegistry.instance.unregister(oldWidget.identity, this);
       UniqueRegistry.instance.register(widget.identity, this);
@@ -101,7 +98,8 @@ class _EnsureUniqueState extends State<EnsureUnique> {
   @override
   Widget build(BuildContext context) {
     if (_lastParent != _parent) {
-      if (_lastParent != null && UniqueRegistry.instance.isRegistered(widget.identity, this)) {
+      if (_lastParent != null &&
+          UniqueRegistry.instance.isRegistered(widget.identity, this)) {
         UniqueRegistry.instance.unregister(widget.identity, this);
       }
 
