@@ -31,7 +31,12 @@ class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
 
   void register(Key key, State state) {
     _registry.putIfAbsent(key, () => <_EnsureUniqueState>[]).insert(0, state);
-    _notifier.value = _registry[key].first;
+
+    // don't call this synchronously, since we're probably building widgets right now.
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      print("postFrameCallback");
+      _notifier.value = _registry[key].first;
+    });
   }
 
   void unregister(Key key, State state) {
@@ -39,9 +44,13 @@ class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
 
     if (_registry[key].length == 0) {
       _registry.remove(key);
-      _notifier.value = null;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _notifier.value = null;
+      });
     } else {
-      _notifier.value = _registry[key].first;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        _notifier.value = _registry[key].first;
+      });
     }
   }
 }
