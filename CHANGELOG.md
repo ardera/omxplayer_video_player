@@ -1,3 +1,7 @@
+## [1.1.0+1] - 12.06.2020
+
+* Defer UniqueRegistry callbacks so they're not called when building the widget tree
+
 ## [1.1.0] - 12.06.2020
 
 * Differentiate between strict and non-strict omxplayer view enforcement. (See documentation)
