@@ -1,10 +1,27 @@
 part of omxplayer_video_player;
 
+typedef omxpvidpp_is_present_func = ffi.Int8 Function();
+typedef OmxpvidppIsPresent = int Function();
+
 class _PlatformInterface {
-  _PlatformInterface._();
+  _PlatformInterface._constructor(this._isPlatformSidePresent);
+
+  factory _PlatformInterface._() {
+    final lib = ffi.DynamicLibrary.process();
+
+    try {
+      final isPresent =
+          lib.lookupFunction<omxpvidpp_is_present_func, OmxpvidppIsPresent>(
+              "omxpvidpp_is_present");
+      return _PlatformInterface._constructor(isPresent);
+    } on ArgumentError catch (e) {
+      return _PlatformInterface._constructor(null);
+    }
+  }
+
+  final OmxpvidppIsPresent _isPlatformSidePresent;
 
   static const _channel = MethodChannel("flutter.io/omxplayerVideoPlayer");
-
   static _PlatformInterface _instance;
 
   static _PlatformInterface get instance {
@@ -16,7 +33,6 @@ class _PlatformInterface {
   }
 
   Future<void> init() {
-    /// no init necessary.
     return null;
   }
 
@@ -118,5 +134,13 @@ class _PlatformInterface {
       Duration(milliseconds: pair[0]),
       Duration(milliseconds: pair[1]),
     );
+  }
+
+  bool isPlatformSidePresent() {
+    if (this._isPlatformSidePresent != null) {
+      return this._isPlatformSidePresent() != 0;
+    } else {
+      return false;
+    }
   }
 }

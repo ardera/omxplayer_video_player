@@ -53,15 +53,17 @@ class _OmxPlayerViewController extends PlatformViewController {
   }
 
   @override
-  void clearFocus() {}
+  Future<void> clearFocus() => Future.value();
 
   @override
-  void dispatchPointerEvent(PointerEvent event) {}
+  Future<void> dispatchPointerEvent(PointerEvent event) => Future.value();
 
   @override
-  void dispose() {
+  Future<void> dispose() {
     if (_initialized) {
-      _PlatformInterface.instance.disposePlatformView(playerId, viewId);
+      return _PlatformInterface.instance.disposePlatformView(playerId, viewId);
+    } else {
+      return Future.value();
     }
   }
 }

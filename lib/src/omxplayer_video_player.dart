@@ -1,5 +1,7 @@
 library omxplayer_video_player;
 
+import 'dart:ffi' as ffi;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
@@ -87,4 +89,7 @@ class OmxplayerVideoPlayer extends VideoPlayerPlatform {
   static void useAsImplementation({bool strictViewBehaviour: false}) {
     VideoPlayerPlatform.instance = OmxplayerVideoPlayer._(strictViewBehaviour);
   }
+
+  static bool isPlatformSidePresent() =>
+      _PlatformInterface.instance.isPlatformSidePresent();
 }
