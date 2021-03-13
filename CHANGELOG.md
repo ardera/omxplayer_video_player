@@ -1,3 +1,8 @@
+## [2.0.0] - 13.03.2021
+
+* Update to null-safe video_player_platform_interface
+* Migrate to null safety
+
 ## [1.2.0] - 01.08.2020
 
 * Added `OmxplayerVideoPlayer.isPlatformSidePresent` to synchronously check if the `OmxplayerVideoPlayer` plugin is present on the platform-side.

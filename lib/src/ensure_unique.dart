@@ -1,20 +1,24 @@
 part of 'omxplayer_video_player.dart';
 
-class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
+class UniqueRegistry implements ValueListenable<_EnsureUniqueState?> {
   UniqueRegistry._();
 
-  static UniqueRegistry _instance;
+  static UniqueRegistry? _instance;
 
   static final _registry = <Key, List<_EnsureUniqueState>>{};
 
-  final _notifier = ValueNotifier<_EnsureUniqueState>(null);
+  final _notifier = ValueNotifier<_EnsureUniqueState?>(null);
 
   static UniqueRegistry get instance {
     if (_instance == null) {
       _instance = UniqueRegistry._();
     }
 
-    return _instance;
+    return _instance!;
+  }
+
+  void _callDeferred(void fn()) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => fn());
   }
 
   @override
@@ -24,33 +28,25 @@ class UniqueRegistry implements ValueListenable<_EnsureUniqueState> {
   void removeListener(listener) => _notifier.removeListener(listener);
 
   @override
-  _EnsureUniqueState get value => _notifier.value;
+  _EnsureUniqueState? get value => _notifier.value;
 
-  bool isRegistered(Key key, State state) =>
-      _registry.containsKey(key) && _registry[key].contains(state);
+  bool isRegistered(Key key, State state) => _registry.containsKey(key) && _registry[key]!.contains(state);
 
   void register(Key key, State state) {
-    _registry.putIfAbsent(key, () => <_EnsureUniqueState>[]).insert(0, state);
+    _registry.putIfAbsent(key, () => <_EnsureUniqueState>[]).insert(0, state as _EnsureUniqueState);
 
     // don't call this synchronously, since we're probably building widgets right now.
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      print("postFrameCallback");
-      _notifier.value = _registry[key].first;
-    });
+    _callDeferred(() => _notifier.value = _registry[key]!.first);
   }
 
   void unregister(Key key, State state) {
-    _registry[key].remove(state);
+    _registry[key]!.remove(state);
 
-    if (_registry[key].length == 0) {
+    if (_registry[key]!.length == 0) {
       _registry.remove(key);
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        _notifier.value = null;
-      });
+      _callDeferred(() => _notifier.value = null);
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        _notifier.value = _registry[key].first;
-      });
+      _callDeferred(() => _notifier.value = _registry[key]!.first);
     }
   }
 }
@@ -60,11 +56,7 @@ class _EnsureUniqueKey extends GlobalObjectKey {
 }
 
 class EnsureUnique extends StatefulWidget {
-  EnsureUnique(
-      {this.strict = false, @required this.identity, @required this.child})
-      : assert(strict != null),
-        assert(identity != null),
-        assert(child != null);
+  EnsureUnique({this.strict = false, required this.identity, required this.child});
 
   final bool strict;
   final Key identity;
@@ -75,10 +67,10 @@ class EnsureUnique extends StatefulWidget {
 }
 
 class _EnsureUniqueState extends State<EnsureUnique> {
-  Element _lastParent;
+  Element? _lastParent;
 
-  Element get _parent {
-    Element e;
+  Element? get _parent {
+    Element? e;
 
     context.visitAncestorElements((element) {
       e = element;
@@ -107,8 +99,7 @@ class _EnsureUniqueState extends State<EnsureUnique> {
   @override
   Widget build(BuildContext context) {
     if (_lastParent != _parent) {
-      if (_lastParent != null &&
-          UniqueRegistry.instance.isRegistered(widget.identity, this)) {
+      if (_lastParent != null && UniqueRegistry.instance.isRegistered(widget.identity, this)) {
         UniqueRegistry.instance.unregister(widget.identity, this);
       }
 
@@ -127,11 +118,11 @@ class _EnsureUniqueState extends State<EnsureUnique> {
     } else {
       return ValueListenableBuilder(
         valueListenable: UniqueRegistry.instance,
-        builder: (context, state, childWidget) {
+        builder: (context, dynamic state, childWidget) {
           if (state == this) {
             return widget.child;
           } else {
-            return childWidget;
+            return childWidget!;
           }
         },
         child: Container(),

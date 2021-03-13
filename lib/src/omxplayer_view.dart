@@ -2,8 +2,8 @@ part of omxplayer_video_player;
 
 class OmxplayerView extends StatelessWidget {
   const OmxplayerView({
-    Key key,
-    @required this.playerId,
+    Key? key,
+    /*required*/ required this.playerId,
   }) : super(key: key);
 
   final int playerId;
