@@ -53,6 +53,10 @@ class OmxplayerVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> seekTo(int textureId, Duration position) => _PlatformInterface.instance.seekTo(textureId, position);
 
+  /// TODO(ardera): Implement setPlaybackSpeed
+  @override
+  Future<void> setPlaybackSpeed(int textureId, double speed) => Future.value();
+
   @override
   Future<Duration> getPosition(int textureId) => _PlatformInterface.instance.getPosition(textureId);
 
